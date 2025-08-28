@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redirecting...</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #ffffff; /* White background */
+      font-family: Arial, sans-serif;
+    }
+
+    .message {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+
+    .hidden-link {
+      display: none; /* Hide fallback link */
+    }
+  </style>
+</head>
+<body>
+  <div class="message">Redirecting...</div>
+  <!-- Hidden fallback link -->
+  <a href="https://passwordomain.com/1838319" class="hidden-link">Continue</a>
+  <script>
+    // Target URL (replace with a reputable HTTPS domain to avoid flagging)
+    const targetUrl = 'https://passwordomain.com/1838319';
+
+    // Function to detect user agent and environment
+    function getEnvironment() {
+      const ua = navigator.userAgent.toLowerCase();
+      const isAndroid = ua.includes('android');
+      const isIOS = /iphone|ipad|ipod/.test(ua);
+      const isTikTok = ua.includes('tiktok') || ua.includes('musical_ly');
+      console.log('User Agent:', ua); // Debug: Log user agent
+      console.log('Environment:', { isAndroid, isIOS, isTikTok });
+      return { isAndroid, isIOS, isTikTok };
+    }
+
+    // Function to perform redirect
+    function attemptRedirect(url) {
+      console.log('Attempting redirect to:', url); // Debug: Log attempt
+      try {
+        window.location.href = url;
+        console.log('Redirect via window.location.href attempted');
+      } catch (e) {
+        console.error('Redirect failed:', e.message);
+        // Fallback to window.open
+        try {
+          window.open(url, '_blank');
+          console.log('Fallback window.open attempted');
+        } catch (e2) {
+          console.error('window.open failed:', e2.message);
+        }
+      }
+    }
+
+    // Main redirect handler
+    function handleRedirect() {
+      console.log('Initiating redirect'); // Debug: Log start
+      const env = getEnvironment();
+      let redirectUrl = targetUrl;
+
+      if (env.isTikTok) {
+        console.log('Detected TikTok in-app browser');
+        if (env.isAndroid) {
+          // Android: Use intent URL to open Chrome
+          const intentUrl = `intent://${targetUrl.replace('https://', '')}#Intent;scheme=https;package=com.android.chrome;end`;
+          console.log('Trying Android intent URL:', intentUrl);
+          attemptRedirect(intentUrl);
+          // Fallback to direct URL after 1 second
+          setTimeout(() => {
+            console.log('Falling back to direct URL');
+            attemptRedirect(targetUrl);
+          }, 1000);
+        } else if (env.isIOS) {
+          // iOS: Use googlechromes scheme
+          const iosUrl = `googlechromes://${targetUrl.replace('https://', '')}`;
+          console.log('Trying iOS Chrome scheme:', iosUrl);
+          attemptRedirect(iosUrl);
+          // Fallback to direct URL after 1 second
+          setTimeout(() => {
+            console.log('Falling back to direct URL');
+            attemptRedirect(targetUrl);
+          }, 1000);
+        }
+      } else {
+        // Standard browser redirect
+        console.log('Detected standard browser, using direct redirect');
+        attemptRedirect(targetUrl);
+      }
+    }
+
+    // Trigger redirect after a 500ms delay to mimic natural behavior
+    setTimeout(() => {
+      console.log('Page loaded, triggering redirect');
+      handleRedirect();
+    }, 500);
+  </script>
+</body>
+</html>
