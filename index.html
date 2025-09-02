@@ -1,137 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting To Giveaway...</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Language" content="en">
+  <meta name="google" content="notranslate">
+  <meta name="googlebot" content="notranslate">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Script Hub</title>
   <style>
     body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #ffffff;
       font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f5ff;
+      color: #222;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
     }
 
-    .message {
-      font-size: 24px;
+    /* Roblox-blue button */
+    .roblox-btn {
+      background: #1446FF;
+      color: #fff;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 14px 28px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .roblox-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+
+    /* Overlay + Popup */
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 999;
+    }
+    .overlay.active { display: block; }
+
+    .popup {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+      z-index: 1000;
+      width: 300px;
+      text-align: center;
+    }
+    .popup .close-btn {
+      position: absolute;
+      top: 10px; right: 14px;
+      font-size: 18px;
+      cursor: pointer;
       font-weight: bold;
       color: #333;
-      margin-bottom: 20px;
     }
 
-    .disclaimer {
-      font-size: 14px;
-      color: #555;
-      max-width: 600px;
-      line-height: 1.5;
-      background-color: #f9f9f9;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
+    /* Offerwall */
+    #offerwall {
+      margin-top: 40px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
     }
-
-    .hidden-link {
-      display: none;
+    #offerwall h2 {
+      font-size: 22px;
+      margin-bottom: 16px;
+      color: #1446FF;
+    }
+    #offerList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .offer-card {
+      background: #f9fbff;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: left;
+    }
+    .offer-card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 14px rgba(0,0,0,0.25);
     }
   </style>
 </head>
 <body>
-  <div class="message">Redirecting To Giveaway...</div>
-  <a href="https://optilinklock.com/1838319" class="hidden-link">Continue</a>
+
+  <!-- Button -->
+  <button class="roblox-btn" onclick="showPopup()">Copy Script</button>
+
+  <!-- Offers -->
+  <section id="offerwall">
+    <h2>Offers</h2>
+    <div id="offerList"></div>
+  </section>
+
+  <!-- Overlay + Popup -->
+  <div id="overlay" class="overlay"></div>
+  <div id="popup" class="popup" style="display:none;">
+    <span class="close-btn" onclick="closePopup()">✖</span>
+    <p>Complete 2 offers to Copy</p>
+  </div>
+
   <script>
-    const targetUrl = 'https://passwordomain.com/1838319';
-
-    function getEnvironment() {
-      const ua = navigator.userAgent.toLowerCase();
-      const isAndroid = ua.includes('android');
-      const isIOS = /iphone|ipad|ipod/.test(ua);
-      const isTikTok = ua.includes('tiktok') || ua.includes('musical_ly');
-      console.log('User Agent:', ua);
-      console.log('Environment:', { isAndroid, isIOS, isTikTok });
-      return { isAndroid, isIOS, isTikTok };
+    function showPopup() {
+      document.getElementById("overlay").classList.add("active");
+      document.getElementById("popup").style.display = "block";
+    }
+    function closePopup() {
+      document.getElementById("overlay").classList.remove("active");
+      document.getElementById("popup").style.display = "none";
     }
 
-    function attemptRedirect(url) {
-      console.log('Attempting redirect to:', url);
-      // Method 1: window.location.href
-      try {
-        window.location.href = url;
-        console.log('Redirect via window.location.href attempted');
-      } catch (e) {
-        console.error('window.location.href failed:', e.message);
-        // Method 2: window.location.replace
-        try {
-          window.location.replace(url);
-          console.log('Redirect via window.location.replace attempted');
-        } catch (e2) {
-          console.error('window.location.replace failed:', e2.message);
-          // Method 3: window.open
-          try {
-            window.open(url, '_blank');
-            console.log('Fallback window.open attempted');
-          } catch (e3) {
-            console.error('window.open failed:', e3.message);
-          }
+    // Fetch offers from CPA Grip
+    const offerList = document.getElementById("offerList");
+    const offersUrl = "https://www.cpagrip.com/common/offer_feed_json.php?user_id=2439739&pubkey=23311a81282b777eab88a6d19f0d9493&tracking_id=";
+
+    fetch(offersUrl)
+      .then(res => res.json())
+      .then(data => {
+        const list = Array.isArray(data) ? data : (data.offers || []);
+        if (!list.length) {
+          offerList.innerHTML = "<p>No offers available.</p>";
+          return;
         }
-      }
-    }
-
-    function handleRedirect() {
-      console.log('Initiating redirect');
-      const env = getEnvironment();
-      let redirectUrl = targetUrl;
-
-      if (env.isTikTok) {
-        console.log('Detected TikTok in-app browser');
-        if (env.isAndroid) {
-          // Try multiple Android intent schemes
-          const intentUrls = [
-            `intent://${targetUrl.replace('https://', '')}#Intent;scheme=https;package=com.android.chrome;end`,
-            `intent://${targetUrl.replace('https://', '')}#Intent;scheme=http;package=com.android.chrome;end`,
-            `intent://${targetUrl.replace('https://', '')}#Intent;scheme=https;package=com.google.android.webview;end`
-          ];
-          intentUrls.forEach((url, index) => {
-            console.log(`Trying Android intent URL ${index + 1}:`, url);
-            attemptRedirect(url);
-          });
-          // Fallback to direct URL after 1 second
-          setTimeout(() => {
-            console.log('Falling back to direct URL for Android');
-            attemptRedirect(targetUrl);
-          }, 1000);
-        } else if (env.isIOS) {
-          // Try multiple iOS schemes
-          const iosUrls = [
-            `googlechromes://${targetUrl.replace('https://', '')}`,
-            `googles://${targetUrl.replace('https://', '')}`,
-            `safari://${targetUrl.replace('https://', '')}`
-          ];
-          iosUrls.forEach((url, index) => {
-            console.log(`Trying iOS scheme ${index + 1}:`, url);
-            attemptRedirect(url);
-          });
-          // Fallback to direct URL after 1 second
-          setTimeout(() => {
-            console.log('Falling back to direct URL for iOS');
-            attemptRedirect(targetUrl);
-          }, 1000);
-        }
-      } else {
-        console.log('Detected standard browser, using direct redirect');
-        attemptRedirect(targetUrl);
-      }
-    }
-
-    setTimeout(() => {
-      console.log('Page loaded, triggering redirect');
-      handleRedirect();
-    }, 500);
+        list.forEach(o => {
+          const clickUrl = o.offerlink || o.offer_url || o.preview_url || "#";
+          const card = document.createElement("div");
+          card.className = "offer-card";
+          card.textContent = o.anchor || "Complete this offer";
+          card.onclick = () => { if (clickUrl && clickUrl !== "#") window.open(clickUrl, "_blank"); };
+          offerList.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error("Offer fetch error:", err);
+        offerList.innerHTML = "<p>Offers could not be loaded.</p>";
+      });
   </script>
+
 </body>
 </html>
