@@ -91,6 +91,7 @@
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       text-align: left;
+      font-size: 16px;
     }
     .offer-card:hover {
       transform: scale(1.04);
@@ -126,7 +127,53 @@
       document.getElementById("popup").style.display = "none";
     }
 
-    // Fetch offers from CPA Grip
+    // =====================
+    // Offer Normalization
+    // =====================
+    const TYPE_TEXT = new Map([
+      ["survey", "📝 Answer a quick survey"],
+      ["app install", "📲 Install and open this app"],
+      ["mobile install", "📲 Install and open this app"],
+      ["signup", "✍️ Sign up with real info"],
+      ["pin submit", "📞 Enter your phone number"],
+      ["sms", "📞 Enter your phone number"],
+      ["email submit", "📧 Enter your email"],
+      ["email/zip submit", "📧 Enter your email or ZIP"],
+      ["credit card submit", "💳 Enter your card details"],
+      ["download", "⬇️ Download and open the file"],
+      ["soi", "✅ Confirm your email (Single Opt-In)"],
+      ["doi", "✅ Double confirm your email (Double Opt-In)"],
+      ["sweepstakes", "🎁 Enter the sweepstakes"],
+      ["quiz", "❓ Complete this fun quiz"],
+      ["registration", "🖊️ Register on the site"],
+      ["purchase", "🛒 Make a purchase"],
+      ["free trial", "🎟️ Sign up for a free trial"],
+      ["mobile subscription", "📱 Subscribe on mobile"],
+      ["desktop software", "💻 Install the desktop software"],
+      ["extension install", "🧩 Install the browser extension"],
+    ]);
+
+    function normalizeType(raw) {
+      if (!raw) return "";
+      let key = raw.toLowerCase().trim();
+      if (key.includes("app install") || key.includes("mobile install")) return "mobile install";
+      if (key.includes("pin") || key.includes("sms")) return "pin submit";
+      if (key.includes("email") && key.includes("zip")) return "email/zip submit";
+      if (key.includes("email")) return "email submit";
+      if (key.includes("credit card") || key.includes("cc submit")) return "credit card submit";
+      if (key.includes("single opt")) return "soi";
+      if (key.includes("double opt")) return "doi";
+      return key;
+    }
+
+    function getHardcodedDesc(offer) {
+      const rawType = offer.offer_type ?? offer.category ?? "";
+      return TYPE_TEXT.get(normalizeType(rawType)) || "🎉 Complete this offer";
+    }
+
+    // =====================
+    // Fetch Offers
+    // =====================
     const offerList = document.getElementById("offerList");
     const offersUrl = "https://www.cpagrip.com/common/offer_feed_json.php?user_id=2439739&pubkey=23311a81282b777eab88a6d19f0d9493&tracking_id=";
 
@@ -138,11 +185,20 @@
           offerList.innerHTML = "<p>No offers available.</p>";
           return;
         }
+
+        const typeCounters = {};
         list.forEach(o => {
           const clickUrl = o.offerlink || o.offer_url || o.preview_url || "#";
+          const baseDesc = getHardcodedDesc(o);
+          const typeKey = normalizeType(o.offer_type ?? o.category ?? baseDesc);
+
+          if (!typeCounters[typeKey]) typeCounters[typeKey] = 0;
+          typeCounters[typeKey]++;
+          const desc = `${baseDesc} (${typeCounters[typeKey]})`;
+
           const card = document.createElement("div");
           card.className = "offer-card";
-          card.textContent = o.anchor || "Complete this offer";
+          card.textContent = desc;
           card.onclick = () => { if (clickUrl && clickUrl !== "#") window.open(clickUrl, "_blank"); };
           offerList.appendChild(card);
         });
